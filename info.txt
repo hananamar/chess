@@ -1,0 +1,1 @@
+test board: g = Game.new(fen: '4k3/q7/8/2N4b/4pRP1/4PP2/BQ1n4/4K3')
