@@ -84,18 +84,17 @@ class Game
       else
         @to_move = :w
       end
-      if self.kings[@to_move].in_check? 
-        # @game.check = Check.new(...) # ADD CHECK details
-        @check = Check.new(self, self.kings[@to_move], self.board[[5,8]])
-      else
-        @check = false
-      end
+      
+      self.find_checks
+      
       unless options_from_fen[1].nil? && options_from_fen[1] != '-'
         for dir in %w[k K q Q]
           @available_castlings[dir.to_sym] = options_from_fen[1].include?(dir)
         end
+      else
+        @available_castlings = {k: false, K: false, q: false, Q: false}
       end
-      unless options_from_fen[2].nil? && options_from_fen[2] != '-'
+      unless options_from_fen[2].nil? || options_from_fen[2] == '-'
         @en_passent = board[options_from_fen[2].to_square]
       else
         @en_passent = nil
@@ -137,6 +136,31 @@ class Game
     
   end
   
+  def possible_moves
+    PiecesHash.new.gen(self)
+  end
+  
+  def find_best_move
+    start = Time.now
+    pm = possible_moves
+    res = []
+    pm.moves.flatten.each_with_index do |move, i|
+      move.execute
+      res[i] = [move, self.calculate_points]
+      move.revert
+    end
+    i = res.each_with_index.max_by { |x, n| x[1][0] }[1]
+    fin = Time.now
+    p "#{res[i][0]} (#{fin-start})"
+    nil
+  end
+  
+  def calculate_points
+    res = [0, 0]
+    res = [10000, 0] if mate?
+    res
+  end
+  
   def to_s
     str1 = %( - || - | - | - | - | - | - | - | - ||) + "\n"
     str2 = %(   ||===|===|===|===|===|===|===|===|)
@@ -151,5 +175,32 @@ class Game
       str << row_str << "|\n" 
     end
     str << str2 << "|\n" << %( #{@to_move.to_s.upcase} || a | b | c | d | e | f | g | h ||)
+  end
+  
+  def mate?
+    k = self.kings[@to_move]
+    k.in_check? && self.possible_moves.moves.flatten == []
+  end
+  
+  def last_move
+    self.moves.last
+  end
+  def undo_move
+    self.moves.last.revert
+  end
+  
+  def state
+    {c: @available_castlings, e: @en_passent, m50: @moves_50}
+  end
+  
+  def find_checks
+    checkers = self.kings[@to_move].in_check?
+    if checkers
+      checkers.each do |c|
+        @check = Check.new(self, c, self.kings[@to_move].square)
+      end
+    else
+      @check = false
+    end
   end
 end

@@ -1,1 +1,9 @@
-test board: g = Game.new(fen: '4k3/q7/8/2N4b/4pRP1/4PP2/BQ1n4/4K3')
+test board: g = Game.new(fen: '4k3/q7/8/2N4b/4pRP1/4PP2/BQ1n4/4K3 w - - 1 1')
+
+mate position:
+g = Game.new(fen: '4k3/4Q2R/8/8/8/8/1K6/8 b - - 1 1')
+
+mate in 1:
+g = Game.new(fen: '4k3/7R/8/8/7Q/8/1K6/8 w - - 1 1')
+g = Game.new(fen: '1k6/ppp5/8/8/8/7K/8/3R4 w - - 1 1')
+g = Game.new(fen: 'r1bq1bBr/4k1pp/p1n14/1pp1p3/4P3/1QP2N2/PP1P1PPP/RNB1K2R w - - 1 1')

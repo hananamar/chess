@@ -17,12 +17,12 @@ class Bishop < Piece
   end
 
   def can_move_to
-    pm = @square.diagonals_unblocked.flatten.delete_if {|s| s.occupied? && s.occupied_by?(@color) }
-    pm = [] if game.kings[@color].in_check?
+    pm = @square.diagonals_unblocked.flatten.delete_if {|s| s.occupied_by?(@color) }
+    pm.keep_if {|s| s == @game.check.from_square || @game.check.path.include?(s)} if game.kings[@color].in_check?
     pm
   end
   
   def can_attack
-    @square.diagonals_unblocked.flatten
+    @square.diagonals_unblocked(@color).flatten
   end
 end

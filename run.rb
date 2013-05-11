@@ -1,18 +1,20 @@
 #!/usr/bin/env ruby
-path = 'C:/Sites/other/chess_game'
+path = '.'
 require "#{path}/bin/Piece.rb"
 require "#{path}/bin/Square.rb"
 require "#{path}/bin/Game.rb"
 require "#{path}/bin/Move.rb"
 require "#{path}/bin/Check.rb"
+require "#{path}/bin/PiecesHash.rb"
 
 def reload!
-  path = 'C:/Sites/other/chess_game'
+  path = '.'
   load "#{path}/bin/Piece.rb"
   load "#{path}/bin/Square.rb"
   load "#{path}/bin/Game.rb"
   load "#{path}/bin/Move.rb"
   load "#{path}/bin/Check.rb"
+  load "#{path}/bin/PiecesHash.rb"
 end
 
 def initialize_board(game)
@@ -32,5 +34,6 @@ class String
   end
 end
 
-require 'irb'
-IRB.start(__FILE__)
+require 'pry'
+pry
+#IRB.start(__FILE__)

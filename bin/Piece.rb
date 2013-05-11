@@ -1,5 +1,5 @@
 class Piece
-  path = 'C:/Sites/other/chess_game/bin/pieces'
+  path = './bin/pieces'
   load "#{path}/king.rb"
   load "#{path}/queen.rb"
   load "#{path}/rook.rb"
@@ -26,21 +26,21 @@ class Piece
   
   def possible_moves
     # All legal moves, with check restrictions
-    @possible_moves ||= self.can_move_to
+    self.can_move_to
   end
   
   def attacked_squares
     # All attacked squares, without check and pin restrictions
-    @attacked_squares ||= self.can_attack
+    self.can_attack
   end
   
   def attacking
     # Enemy pieces being attacked, contained in "possible moves"
-    @attacking ||= attacked_squares.keep_if {|s| s.occupied_by?(other_color)}
+    attacked_squares.keep_if {|s| s.occupied_by?(other_color)}
   end
   
   def defending
     # Team pieces being defended, contained in "possible moves"
-    @defending ||= attacked_squares.keep_if {|s| s.occupied_by?(@color)}
+    attacked_squares.keep_if {|s| s.occupied_by?(@color)}
   end
 end

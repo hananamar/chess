@@ -82,7 +82,7 @@ class Square
     diags
   end
   
-  def diagonals_unblocked #(p_color)
+  def diagonals_unblocked(p_color = nil)
     directions = [[1,1], [1,-1], [-1,-1], [-1,1]]
     diags = [[],[],[],[]]
     
@@ -92,12 +92,10 @@ class Square
         s = game.board[[col + i*directions[j][0], row + i*directions[j][1]]]
         break if s.nil?
         if s.occupied?
-          # if s.occupied_by?(p_color)
-          #   break 
-          # else
+          unless p_color && s.piece.kind == :king && s.piece.other_color == p_color
             diags[j] << s
             break
-          # end
+          end
         end
         diags[j] << s
         i += 1
@@ -132,7 +130,7 @@ class Square
     str8s
   end
   
-  def straights_unblocked #(p_color)
+  def straights_unblocked(p_color = nil)
     directions = [[0,1], [1,0], [0,-1], [-1,0]]
     str8s = [[],[],[],[]]
     for j in 0..3 do
@@ -141,12 +139,10 @@ class Square
         s = game.board[[col + i*directions[j][0], row + i*directions[j][1]]]
         break if s.nil?
         if s.occupied?
-          # if s.occupied_by?(p_color)
-          #   break 
-          # else
+          unless p_color && s.piece.kind == :king && s.piece.other_color == p_color
             str8s[j] << s
             break
-          # end
+          end
         end
         str8s[j] << s
         i += 1
@@ -168,18 +164,17 @@ class Square
   end
   
   def attacked_by?(color)
-    res = false
+    res = []
     @game.pieces[color].each do |p|
       if p.kind == :king
         if self.adjacent.include?(p.square)
-          res = true
-          break
+          res << p.square
         end
       elsif p.attacked_squares.include?(self)
-        res = true
-        break
+        res << p.square
       end
     end
+    res = false if res.empty?
     res
   end
   
@@ -194,5 +189,18 @@ class Square
       @piece = nil
     end
     temp
+  end
+  
+  def skewered_through_king?(color)
+    k = @game.kings[color]
+    attackers.each do |s|
+      s.direction_to(self)
+    end
+  end
+  
+  def direction_to(s)
+    # diag NW = [-1, 1]
+    # row E = [1, 0]
+    ans = [s.col <=> self.col, s.row <=> self.row]
   end
 end
